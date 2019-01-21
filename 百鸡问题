@@ -1,0 +1,47 @@
+/*
+百元白鸡问题，100元钱，公鸡3/只，母鸡5/只，小鸡三支1元
+*/
+
+#include<iostream>
+#include<vector>
+
+using std::cout;
+using std::cin;
+using std::vector;
+using std::endl;
+
+typedef struct answer
+{
+	int cock;
+	int hen;
+	int chicken;
+}Answer;
+
+//暴力破解问题
+//明显是最简单的方法，
+//似乎将小鸡放在外面会有更小的常数……
+int main01(void)
+{
+	vector<Answer> myAnswer;
+	for (int cock = 0; cock < 100; cock++)
+	{
+		for (int hen = 0; hen < 100 - cock; hen++)
+		{
+			
+			int	chicken = (100 - cock * 3 - hen * 5) * 3;
+			if (chicken + cock + hen == 100)
+			{
+				Answer tmp;
+				tmp.chicken = chicken;
+				tmp.cock = cock;
+				tmp.hen = hen;
+				myAnswer.push_back(tmp);
+			}
+		}
+	}
+	for (int i = 0; i < myAnswer.size(); i++)
+	{
+		cout << "公鸡： " << myAnswer[i].cock << " " << "母鸡： " << myAnswer[i].hen << " " << "小鸡： " << myAnswer[i].chicken << endl;
+	}
+	system("pause");
+}
