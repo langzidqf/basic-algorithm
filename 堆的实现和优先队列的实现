@@ -1,0 +1,135 @@
+//本次完成的堆数据结构，常用作优先队列，
+//一般不用做排序
+
+//使用本节来完成堆的操作
+//其中维护大堆操作
+//注：此处使用数组完成
+//例：	1，4，7，8，9
+//数组：0，1，2，3，4
+//则0号元素的左孩子：1、0号元素的右孩子是：2
+//则左孩子索引计算公式为：（i+1）* 2 - 1
+//则右孩子索引计算公式为：（i+1）* 2 
+//则父母的索引计算公式为：（i+1）/ 2 - 1  但是如果是0的话，似乎公式不对
+#include<iostream>
+#include<vector>
+#include<string>
+#include<deque>
+
+using namespace std;
+
+int parent(int i)
+{
+	if (i == 0) return 0;
+	else
+	{
+		return (i + 1) / 2 - 1;
+	}
+}
+
+int lchild(int i)
+{
+	return (i + 1) * 2 - 1;
+}
+
+int rchild(int i)
+{
+	return (i + 1) * 2;
+}
+
+void exchange(int & a, int & b)
+{
+	int temp = a;
+	a = b;
+	b = temp;
+	return;
+}
+
+
+//其中假设在数组a中，index下的孩子们已经符合了max_heap的性质
+//入口参数：a数组，index表示需要修正的数组索引，num表示数组的长度
+//出口参数：直接对a数组进行修改
+void max_heapfy_recursion(int * a, int index ,int num)
+{
+	int lc = lchild(index);
+	int rc = rchild(index);
+	//需要进行更改的两种情况
+	//否则就不需要更改
+	if (a[lc] > a[index] && a[lc] >= a[rc] && lc < num)
+	{
+		exchange(a[index], a[lc]);
+		max_heapfy_recursion(a, lc , num);
+		return;
+	}
+	else if (a[rc] > a[index] && a[rc] >= a[lc] && rc < num)
+	{
+		exchange(a[index], a[rc]);
+		max_heapfy_recursion(a, rc, num);
+		return;
+	}
+	return;
+}
+
+void max_initial(int * a, int num)
+{
+	for (int i = num - 1; i >= 0; i--)
+	{
+		max_heapfy_recursion(a, i, num);
+	}
+	for (int i = 0; i < num; i++)
+		cout << a[i] << "、";
+	cout << endl;
+
+	//打印信息
+	for (int i = 0; i < num; i++)
+	{
+		int lc = lchild(i);
+		int rc = rchild(i);
+		cout << "元素" << a[i];
+		if (lc < num)
+		{
+			cout << "的左孩子为" << a[lc] << endl;
+		}
+		else
+		{
+			cout << "没有左孩子" << endl;
+		}
+		if (rc < num)
+		{
+			cout << "的右孩子为：" << a[rc] << endl;
+		}
+		else
+		{
+			cout << "没有右孩子" << endl;
+		}
+	}
+}
+
+void max_heap_sort(int * a, int num)
+{
+	//不在原数组上操作
+	int * ar = new int[num];
+
+	for (int i = 0; i < num; i++)
+		ar[i] = a[i];
+
+	while (num > 0)
+	{
+		cout << ar[0]<<"、";
+		exchange(ar[0], ar[num - 1]);
+		num--;
+		max_heapfy_recursion(ar, 0, num);
+	}
+
+
+	delete[] ar;
+}
+
+int main(void)
+{
+	int a[10] = { 12,34,13,45,68,67,98,100, 99, 10 };
+	max_initial(a, 10);
+	cout << endl << "-----------------------------------------------------------------------" << endl;
+	max_heap_sort(a, 10);
+	system("pause");
+	return 0;
+}
