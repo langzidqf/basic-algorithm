@@ -1,0 +1,42 @@
+//实现huffman编码
+//其中给出各个字符的频率，
+//通过一个栈和队列完成操作
+//最后的工作在于排序时间
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+
+using std::for_each;
+using std::vector;
+using std::endl;
+using std::deque;
+using std::cout;
+using std::cin;
+using std::sort;
+
+//此处仅仅采用暴力算法
+//直接去破解
+
+
+bool mycom(int a, int b)
+{
+	return a > b;
+}
+
+int main(void)
+{
+	vector<int> ar = { 12,34,56,14,26,47,89,100 };
+	sort(ar.begin(), ar.end(), mycom);
+	while (ar.size() != 0 && ar.size() != 1)
+	{
+		int num1 = *(ar.end() - 1);
+		ar.pop_back();
+		int num2 = *(ar.end() - 1);
+		ar.pop_back();
+		ar.push_back(num1 + num2);
+		sort(ar.begin(), ar.end(), mycom);
+		cout << "进行" << num1 << "+" << num2 << endl;
+	}
+	system("pause");
+}
