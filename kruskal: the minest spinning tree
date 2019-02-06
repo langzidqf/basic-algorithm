@@ -1,0 +1,137 @@
+//本次来实现kruskal算法，
+//从而实现最小支撑树
+
+//算法的具体实现是：对所有的边进行一次排序，然后取出其中的最小的数字
+//同时对两个点之间进行查并集合排序
+
+
+//在本题中实现的数据结构
+//1.边保存
+//  将边按照边的大小进行排序
+//  取出边最小的
+
+//2.查并集合操作
+//  检测两个点是不是在同一个集合下
+//  将两个集合的点进行合并操作
+//同时具体说明一下这个实现过程
+//用一个数组其中的各个rank表示相应的节点
+//节点保存的值表示自己所在的树的上一个节点的序号
+//例如：0 1 2 3 4 5
+     // 3 4 1 2 4 5 
+//在这个数组中表示了两个集合 0->3->2->1->4  和5
+//同时我们也就得到了判断一个点是不是root的方法，rank == 值
+
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+
+typedef struct mynode
+{
+	int vex1;
+	int vex2;
+	int len;
+}myNode;
+
+bool mycompare(myNode node1, myNode node2)
+{
+	return node1.len > node2.len;
+}
+
+
+//此处说明一下这个函数的功能：如果index1和index2在同一个树中则返回false，如果二者不在同一个树中，则返回ture
+//为了防止极端情况的出现，将树小的放入树大的中间去
+//入口参数：a查并集合的数组，index1、index2表示相应的节点
+//出口参数：无
+bool tree_conbine(int * a, int index1, int index2)
+{
+	int len1 = 0;
+	int len2 = 0;
+	int index_1 = index1;
+	while (a[index_1] != index_1)
+	{
+		index_1 = a[index_1];
+		len1++;
+	}
+
+	int index_2 = index2;
+	while (a[index_2] != index_2)
+	{
+		index_2 = a[index_2];
+		len2++;
+	}
+	if (index_1 == index_2)
+	{
+		return false;
+	}
+	else {
+		//尽量减少树的高度
+		if (len1 > len2) a[index_1] = index_2;
+		else a[index_2] = index_1;
+		return true;
+	}
+}
+
+
+//int main(void)
+//{
+//	int a[6] = { 3 ,4 ,1, 2, 4, 5 };
+//	if (tree_conbine(a, 0, 1) == false) cout << "这个0 1 两个点连着的" << endl;
+//	else cout << "这个0 1 没有连着" << endl;
+//	if (tree_conbine(a, 0, 5) == false) cout << "这个0 5 这两个点连着的" << endl;
+//	else cout << "0 5 没有连着" << endl;
+//	if (tree_conbine(a, 1, 5) == false) cout << "这个1 5 这两个点连着的" << endl;
+//	else cout << "1 5 连着的" << endl;
+//	system("pause");
+//	return 0;
+//}
+
+int main(void)
+{
+	vector<myNode> vexlist;
+	int vect[7][7] = { {0,	12, 100 ,100,100, 16,14 },
+						{12, 0, 10, 100,100, 7,100},
+						{100,10,0,3,5,6,100},
+						{100,100,3,0,4,100,100},
+						{100,100,5,4,0,2,8},
+						{16,7,6,100,2,0,9},
+						{14,100,100,100,8,9,0} };
+	int len = 7;
+	//首先将其存入相应的数据中
+	for (int i = 0; i < len; i++)
+		for (int j = 0; j < i; j++)
+		{
+			myNode tmp;
+			tmp.len = vect[i][j];
+			tmp.vex1 = i;
+			tmp.vex2 = j;
+			vexlist.push_back(tmp);
+		}
+
+	sort(vexlist.begin(), vexlist.end(), mycompare);
+	for (vector<myNode>::iterator i = vexlist.begin(); i < vexlist.end(); i++)
+		cout << (*i).len << "、";
+	cout << endl;
+	//建立相应的数组
+	int tree[7];
+	for (int i = 0; i < len; i++)
+		tree[i] = i;
+
+	//现在开始生成最小支撑树
+	int sum = 0;
+	while (vexlist.size() != 0 )
+	{
+		if ((vexlist.end() - 1)->len == 100) break;
+		myNode tmp = *(vexlist.end() - 1);
+		vexlist.pop_back();
+		if(tree_conbine(tree,tmp.vex1,tmp.vex2) == true )
+		{
+			sum += tmp.len;
+			cout << "此时纳入一条新的边有编号" << tmp.vex1 << "到编号为" << tmp.vex2 << "的边，权重为" << tmp.len << endl;
+		}
+	}
+	system("pause");
+	return 0;
+}
