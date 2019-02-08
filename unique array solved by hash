@@ -1,0 +1,53 @@
+//采用hash表的方法来解决这道题
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    int minIncrementForUnique(vector<int>& A) {
+        vector<int> * list = new vector<int> [5004];
+        int sum = 0;
+        for(unsigned i = 0; i< A.size();i++){
+            int index = A[i] % 5004;
+            int times = A[i] / 5004;
+            auto res = find(list[index].begin(),list[index].end(),times);
+            if(res == list[index].end())
+                list[index].push_back(times);
+            else{
+                int old_times = times;
+                int old_index = index;
+                while(1)
+                {
+                    index++;
+                    if(index >= 5004)
+                    {
+                        index = index % 5004;
+                        times ++ ;
+                    }
+                    auto res = find(list[index].begin(),list[index].end(),times);
+                    if(res == list[index].end())
+                    {
+                        list[index].push_back(times);
+                        sum += (times - old_times) * 5004 + (index - old_index);
+                        break;
+                    }
+                }
+            }
+        }
+        delete[] list;
+        return sum;
+    }
+};
+
+int main(void)
+{
+    Solution mySolution;
+    vector<int> myint = {3,2,1,2,1,7};
+    cout << mySolution.minIncrementForUnique(myint);
+    return 0;
+}
+
